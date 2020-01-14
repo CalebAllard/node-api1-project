@@ -17,7 +17,17 @@ const UserCard = props => {
     const deleteItem = id => {
         console.log(id);
         axios.delete(`http://localhost:8000/api/users/${id}`)
-        .then(resp => {console.log(resp)})
+        .then(resp => {
+            console.log(resp);
+            props.setUsers([
+                ...props.users.filter(item => {
+                    if(item.id !== id){
+                        return item
+                    }
+                })
+
+            ])
+        })
         .catch(err => console.log(err));
     };
     
@@ -48,7 +58,7 @@ const UserCard = props => {
                 </IconButton>
             </Grid>
             <Grid item xs={6}>
-                <IconButton color="secondary">
+                <IconButton color="secondary" onClick={() => deleteItem(props.id)} >
                     <DeleteForeverIcon />
                 </IconButton>
             </Grid>

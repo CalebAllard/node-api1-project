@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
         
         maxHeight:115,
         maxWidth:350,
-        padding:2,
+        padding:'2px',
     }
     
   }));
@@ -41,7 +41,10 @@ const useStyles = makeStyles(theme => ({
 const UserList = () => {
     const [users, setUsers] = useState();
     const [adding, setAdding] = useState(false);
-    const [data, setData] = useState({});
+    const [data, setData] = useState({
+        name:'',
+        bio:''
+    });
     const classes = useStyles();
     useEffect(()=>{
         axios.get('http://localhost:8000/api/users')
@@ -54,7 +57,25 @@ const UserList = () => {
         
     },[])
     console.log(adding);
-    
+    const handChange = (e) => {
+        setData({
+                ...data,
+            [e.target.id]: e.target.value
+        })
+        console.log(data);
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.post("http://localhost:8000/api/users",data).then(resp => {
+            setUsers([
+                ...users,
+                resp.data
+            ]);
+            setAdding(false);
+            setData({name:'',bio:''});
+        }).catch(err => console.log(err));
+    };
+
     return(
         <Container maxWidth="md">
         <div className={classes.root}>
@@ -68,28 +89,28 @@ const UserList = () => {
                     <Button className={classes.menuButton} color="default" onClick={() => setAdding(!adding)}>Add a user</Button>
                     }
                     {adding &&
-                    <Button className={classes.menuButton} color="default" onClick={() => setAdding(!adding)}>Cancel</Button>
+                    <Button className={classes.menuButton} color="default" onClick={() => {setAdding(!adding); setData({name:'',bio:''})}}>Cancel</Button>
                     }
                 </Toolbar>
             </AppBar>
         </div>
         {adding && 
             <div className="adding-form">
-                <form>
+                <form >
                     <Grid container spacing={3}>
                         
                             <Grid item xs={12}>
-                                <TextField id="name" label="Name"  required />
+                                <TextField id="name" label="Name"  required onChange={handChange} />
                             </Grid>
                         
                         
                             <Grid item xs={12}>
-                                <TextareaAutosize className={classes.textArea} rowsMax={5} id="bio" label="Bio"   required/>
+                                <TextareaAutosize className={classes.textArea} rowsMax={5} id="bio" placeholder="Bio"  required onChange={handChange}/>
                             </Grid>
                         
                         
                             <Grid item xs={12}>
-                                <Button className={classes.editButton}>Save</Button>
+                                <Button className={classes.editButton} onClick={handleSubmit}>Save</Button>
                             </Grid>
                         
                     </Grid>
@@ -102,7 +123,7 @@ const UserList = () => {
         <Grid container spacing={3} >
         {users && users.map(item => 
             <Grid key={item.id} item>
-            <UserCard  name={item.name} bio={item.bio} id={item.id}  />
+            <UserCard  name={item.name} bio={item.bio} id={item.id} setUsers={setUsers} users={users}  />
             </Grid>
         )}
         </Grid>
