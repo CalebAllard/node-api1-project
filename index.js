@@ -78,6 +78,7 @@ server.delete('/api/users/:id', (req,res) => {
 server.put('/api/users/:id',(req,res) => {
     const id = req.params.id;
     const data = req.body;
+    console.log(req);
     db.findById(id)
         .then(user => { 
             if(!user){
@@ -98,5 +99,5 @@ server.put('/api/users/:id',(req,res) => {
 
 
 
-const port = 8000;
+const port =  process.env.PORT || 8000;
 server.listen(port,() => console.log(`server runnning on port:${port}`));
