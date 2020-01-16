@@ -99,5 +99,5 @@ server.put('/api/users/:id',(req,res) => {
 
 
 
-const port =  process.env.PORT || 8000;
+const port =  process.env.PORT || 4000;
 server.listen(port,() => console.log(`server runnning on port:${port}`));
