@@ -7,6 +7,11 @@ const db = require('./data/db.js');
 server.use(express.json());
 server.use(cors());
 
+
+server.get('/', (req,res) => {
+    res.status(200).json('Server up and running!')
+});
+
 // get items
 server.get('/api/users', (req,res) => {
     db.find().then(users => {
